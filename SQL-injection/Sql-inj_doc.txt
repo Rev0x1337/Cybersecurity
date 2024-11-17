@@ -9,6 +9,7 @@
     2.2 INSERT - добавление данных.
     2.3 UPDATE - изменение данных.
     2.4 DELETE - удаление данных.
+    2.5 UNION - объединяет два запроса в один.
 
 3. Операторы доступа к данным.
     3.1 GRANT - разрешение на манипуляции с объектом.
@@ -52,3 +53,20 @@ Ex: SELECT * FROM users WHERE login LIKE 'admin' AND password LIKE '%'
 2. Тип инъекций.
 
     2.1 UNION-based
+- У всех запросов должно быть одинаковое кол-во столбцов в запросе.
+- Полное совпадение типов столбцов.
+Ex: запрос 1 = SELECT id, user FROM users WHERE id=1
+    запрос 2 = SELECT user, password FROM passwords WHERE id=1
+SELECT user, value FROM table_1 UNION SELECT user, value FROM table_2 (добавление ALL после UNION выводит дубликаты)
+
+Запрос который ничего не выведет.
+SELECT user, date FROM table_1 UNION SELECT value FROM table_2 (несовпадение количества столбцов)
+
+Запрос который ничего не выведет.
+SELECT user, date FROM table_1 UNION SELECT user, string FROM table_2 (несовпадение типов столбцов)
+
+
+
+
+
+
