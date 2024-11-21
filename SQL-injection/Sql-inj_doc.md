@@ -92,6 +92,7 @@ SELECT * FROM users WHERE login LIKE 'admin' AND password LIKE '%'
 
 ****2. Тип инъекций.****
 
+
 ***2.1 UNION-based***
 
 - У всех запросов должно быть одинаковое кол-во столбцов в запросе.
