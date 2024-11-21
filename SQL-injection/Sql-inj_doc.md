@@ -216,7 +216,15 @@ SELECT table_name FROM information_schema.columns WHERE table_schema = database(
    
 **limit 0,1** - 1шт
 
+Если в БД есть таблица со столбцом содержащим **user**, то этот запрос вернёт имя таблицы. Например ***some_table_name***
 
+2.
+```
+SELECT 1 FROM dual WHERE some_table_name LIKE '%'
+```
+Проверка на строку. Если вернул строку - **true**, иначе - **false**
+
+Узнать имя таблицы.
 
 
 
